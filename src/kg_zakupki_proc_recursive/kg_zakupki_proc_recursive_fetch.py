@@ -41,7 +41,7 @@ def get_count_contracts(context, data):
 	# response = _fetch_post(context, data, const.SEED_LINK, request_form)
 	#
 	# count_contracts = len(response.html.xpath(const.X_PATH_CONTRACT_NUMBER))
-	count_contracts = 10
+	count_contracts = 1000
 
 	data = {
 		"count_contracts": count_contracts,
@@ -313,7 +313,7 @@ def get_fifty_contracts(context, data):
 
 	data["first"] += 10
 	print("data => ",data)
-	if data['step'] <= data["count_contracts"]:
+	if data['first'] <= data["count_contracts"]:
 		context.recurse(data=data)
 
 # get - запрос
