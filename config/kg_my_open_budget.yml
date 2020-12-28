@@ -1,0 +1,135 @@
+# Example scraper to demonstrate Memorious XPath narrowing
+name: kg_my_open_budget
+description: Get information from budget.okmot.kg
+# Uncomment to run this scraper automatically:
+# schedule: weekly
+pipeline:
+  init:
+    # Start URL
+    method: kg_my_open_budget.kg_my_open_budget_fetch:initialize
+    handle:
+      fetch_links: fetch_links
+
+  fetch_links:
+    method: kg_my_open_budget.kg_my_open_budget_fetch:fetch_links
+    handle:
+      store_kg_budget_new_revenue: store_kg_budget_new_revenue
+      store_kg_budget_new_revenue_totals: store_kg_budget_new_revenue_totals
+      store_kg_budget_new_income_inn_details: store_kg_budget_new_income_inn_details
+      store_kg_budget_new_income_departments: store_kg_budget_new_income_departments
+      store_kg_budget_new_expenses_functions_details: store_kg_budget_new_expenses_functions_details
+      store_kg_budget_new_expenses_functions_details_totals: store_kg_budget_new_expenses_functions_details_totals
+      store_kg_budget_new_expenses_departments: store_kg_budget_new_expenses_departments
+      store_kg_budget_new_expenses_departments_totals: store_kg_budget_new_expenses_departments_totals
+      store_kg_budget_new_expenses_inn_details: store_kg_budget_new_expenses_inn_details
+
+  store_kg_budget_new_revenue:
+    method: db
+    params:
+      table: "kg_budget_new_revenue"
+      unique:
+        - countryCode
+        - regionCode
+        - districCode
+        - code
+        - region
+        - rayon
+        - distric
+        - name
+        - dataFrom
+        - dataTo
+
+  store_kg_budget_new_revenue_totals:
+    method: db
+    params:
+      table: "kg_budget_new_revenue_totals"
+      unique:
+        - countryCode
+        - regionCode
+        - districCode
+        - code
+        - region
+        - rayon
+        - distric
+        - name
+        - dataFrom
+        - dataTo
+
+  store_kg_budget_new_income_inn_details:
+    method: db
+    params:
+      table: "kg_budget_new_income_inn_details"
+      unique:
+        - inn
+        - number
+        - period
+        - payer
+        - descr
+
+  store_kg_budget_new_income_departments:
+    method: db
+    params:
+      table: "kg_budget_new_income_departments"
+      unique:
+        - parent_code
+        - code
+        - departament
+        - subordination
+        - title
+
+  store_kg_budget_new_expenses_functions_details:
+    method: db
+    params:
+      table: "kg_budget_new_expenses_functions_details"
+      unique:
+        - code
+        - section
+        - group
+        - functions
+        - name
+        - dateFrom
+        - dateTo
+
+  store_kg_budget_new_expenses_functions_details_totals:
+    method: db
+    params:
+      table: "kg_budget_new_expenses_functions_details_totals"
+      unique:
+        - code
+        - section
+        - group
+        - functions
+        - name
+        - dateFrom
+        - dateTo
+
+  store_kg_budget_new_expenses_departments:
+    method: db
+    params:
+      table: "kg_budget_new_expenses_departments"
+      unique:
+        - code
+        - departamental
+        - group
+        - functions
+
+  store_kg_budget_new_expenses_departments_totals:
+    method: db
+    params:
+      table: "kg_budget_new_expenses_departments_totals"
+      unique:
+        - code
+        - departamental
+        - group
+        - functions
+
+  store_kg_budget_new_expenses_inn_details:
+    method: db
+    params:
+      table: "kg_budget_new_expenses_inn_details"
+      unique:
+        - payer_inn
+        - number
+        - period
+        - payer
+        - description

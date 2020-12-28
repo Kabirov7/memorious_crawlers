@@ -1,0 +1,82 @@
+# Example scraper to demonstrate Memorious XPath narrowing
+name: kg_zakupki_proc
+description: Get information from zakupki.gov.kg/../single_source_procurement.xhtml
+# Uncomment to run this scraper automatically:
+# schedule: weekly
+pipeline:
+  init:
+    method: kg_zakupki_proc.kg_zakupki_proc_fetch:get_all_contracts
+    handle:
+      get_one_contract: get_one_contract
+
+
+  get_one_contract:
+    method: kg_zakupki_proc.kg_zakupki_proc_fetch:get_one_contract
+    params:
+    handle:
+      parse_contract: parse_contract
+
+  parse_contract:
+    method: kg_zakupki_proc.kg_zakupki_proc_fetch:parse_contract
+    params:
+    handle:
+      pass: store
+
+  store:
+    # Store the crawled documents to a directory
+    method: db
+    params:
+      table: kg_zakupki
+      children:
+        -
+          key: lot_procurement
+          table_suffix: lot_procurement
+          unique:
+            - contract_number
+
+        -
+          key: lot_info_procurement
+          table_suffix: lot_info_procurement
+          unique:
+            - contract_number
+            - lot_num
+        -
+          key: okgz_classes_procurement
+          table_suffix: okgz_classes_procurement
+          unique:
+            - contract_number
+            - lot_num
+            - okgz_class
+            - okgz_unit
+            - okgz_count
+            - okgz_price_unit_item
+            - okgz_price_sum
+            - okgz_brand
+            - okgz_made_in
+            - okgz_specification
+        -
+          key: delivery_time_procurement
+          table_suffix: delivery_time_procurement
+          unique:
+            - contract_number
+            - lot_num
+            - number
+        -
+          key: payment_schedule_procurement
+          table_suffix: payment_schedule_procurement
+          unique:
+            - contract_number
+            - lot_num
+            - number
+        -
+          key: payment_files_procurement
+          table_suffix: payment_files_procurement
+          unique:
+            - contract_number
+            - title
+        -
+          key: delivery_files_procurement
+          table_suffix: delivery_files_procurement
+          unique:
+            - contract_number
+            - title

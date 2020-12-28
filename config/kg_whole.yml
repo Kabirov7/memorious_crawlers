@@ -1,0 +1,67 @@
+# Scraper for the OCCRP web site.
+# The goal is not to download all HTML, but only PDFs & other documents
+# linked from the page as proof.
+name: kg_procurement_whole
+
+# A title for display in the UI:
+description: 'Kyrgyz state procurement database'
+
+# Uncomment to run this scraper automatically:
+# schedule: daily
+#delay: 1
+stealthy: true
+pipeline:
+
+  init:
+    # This first stage will get the ball rolling with a seed URL.
+    method: whole_kg.kg_procurement_fetch:fetch_links
+    handle:
+      tender_number: fetch
+
+  fetch:
+    # Download the seed page
+    method: whole_kg.kg_procurement_fetch:fetch_tender
+    params:
+    handle:
+      tender_pages: extractdata
+
+  extractdata:
+    # Parse the scraped pages to extract useful information
+    method: whole_kg.kg_procurement_parse:extract
+    handle:
+      pass: store
+  
+  store:
+    # Store the crawled documents to a directory
+    method: db
+    params:
+      table: "kg_procurement"
+      unique:
+        - number
+      children:
+        -
+          key: lots
+          table_suffix: lots
+          unique:
+            - tender_number
+            - lot_number
+        -
+          key: sublots
+          table_suffix: sublots
+          unique:
+            - tender_number
+            - lot_number
+            - sublot_number
+        -
+          key: participants
+          table_suffix: participants
+          unique:
+            - name
+            - inn
+        -
+          key: lot_participation
+          table_suffix: lot_participation
+          unique:
+            - tender_number
+            - lot_number
+            - participant_inn

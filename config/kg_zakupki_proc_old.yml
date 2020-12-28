@@ -1,0 +1,109 @@
+# Example scraper to demonstrate Memorious XPath narrowing
+name: kg_zakupki_proc_old
+description: Get information from zakupki.gov.kg/../single_source_procurement.xhtml
+# Uncomment to run this scraper automatically:
+# schedule: weekly
+pipeline:
+  init:
+    # Start URL
+    method: kg_zakupki_proc_old.kg_zakupki_proc_old_fetch:initialize
+    handle:
+      fetch_links: fetch_links
+
+  fetch_links:
+    method: kg_zakupki_proc_old.kg_zakupki_proc_old_fetch:fetch_links
+    handle:
+      store_lot_procurement: store_lot_procurement
+      store_lot_info: store_lot_info
+      store_okgz_classes: store_okgz_classes
+      store_delivery_time: store_delivery_time
+      store_delivery_files: store_delivery_files
+      store_payment_schedule: store_payment_schedule
+      store_payment_files: store_payment_files
+
+  store_lot_procurement:
+    # Store the crawled documents to a directory
+    method: db
+    params:
+      table: 'kg_zakupki_lot_procurement'
+      unique:
+        - contract_number
+        - procuring
+        - provider
+        - type
+        - date
+
+  store_lot_info:
+    # Store the crawled documents to a directory
+    method: db
+    params:
+      table: 'kg_zakupki_lot_info_procurement'
+      unique:
+        - contract_number
+        - type
+        - provider
+        - lot_num
+        - date_singing
+        - choose_case
+
+  store_okgz_classes:
+    # Store the crawled documents to a directory
+    method: db
+    params:
+      table: 'kg_zakupki_okgz_classes_procurement'
+      unique:
+        - contract_number
+        - okgz_class
+        - okgz_unit
+        - okgz_count
+        - okgz_price_unit_item
+        - okgz_price_sum
+        - okgz_brand
+        - okgz_made_in
+        - okgz_specification
+
+  store_delivery_time:
+    # Store the crawled documents to a directory
+    method: db
+    params:
+      table: 'kg_zakupki_delivery_time_procurement'
+      unique:
+        - contract_number
+        - number
+        - start_date
+        - finish_date
+        - adres
+        - condition_payment
+        - doc
+
+  store_delivery_files:
+    # Store the crawled documents to a directory
+    method: db
+    params:
+      table: 'kg_zakupki_delivery_files_procurement'
+      unique:
+        - contract_number
+        - title
+
+  store_payment_schedule:
+    # Store the crawled documents to a directory
+    method: db
+    params:
+      table: 'kg_zakupki_payment_schedule_procurement'
+      unique:
+        - contract_number
+        - number
+        - start_date
+        - finish_date
+        - payment_type
+        - condition_payment
+        - doc
+
+  store_payment_files:
+    # Store the crawled documents to a directory
+    method: db
+    params:
+      table: 'kg_zakupki_payment_files_procurement'
+      unique:
+        - contract_number
+        - title
